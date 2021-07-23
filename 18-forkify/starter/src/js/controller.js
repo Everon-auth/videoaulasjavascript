@@ -7,9 +7,17 @@ import'regenerator-runtime/runtime'
 
 import * as model from './model.js'
 import recipeView from './views/recipeView'
+import { async } from 'regenerator-runtime/runtime'
+import searchView from './views/searchView.js'
+import resultsView from './views/resultsView.js'
 
 
-const recipeContainer = document.querySelector('.recipe');
+
+
+
+if(module.hot){
+  module.hot.accept()
+}
 
 
 
@@ -24,7 +32,6 @@ const controlRecipes = async function(){
   try{
 
     const id = window.location.hash.slice(1)
-    console.log(id)
 
     if(!id) return
     recipeView.renderSpinner()
@@ -36,17 +43,32 @@ const controlRecipes = async function(){
     
     // 2) Renderizando as receitas
 
-    recipeView.render(model.state.recipe)
+    recipeView.render(recipe)
 
     
   }catch(err){
-    recipeView.renderError(`${err} xp xp xp`)
+    recipeView.renderError()
   }
 };
 
+const controlSearchResults = async function (){
+  try{
+
+    resultsView.renderSpinner()
+    const query = searchView.getQuery();
+    if(!query) return;
+
+    await model.loadSearchResults(query)
+    
+    resultsView.render(model.state.search.results)
+
+  }catch(err){
+    console.error(err)
+  }
+}
+
 const init = function(){
-  recipeView.addHandlerRender(controlRecipes())
+  recipeView.addHandlerRender(controlRecipes)
+  searchView.addHandlerSearch(controlSearchResults)
 }
 init()
-
-// video 285, min 7
