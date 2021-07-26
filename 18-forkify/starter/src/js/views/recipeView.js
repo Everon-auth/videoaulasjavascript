@@ -7,6 +7,26 @@ class recipeview extends View{
     _data
     _errorMessage = `We couldn not find that recipe. Please try another one!`
     _message = ``;
+    addHandlerRender(handler) {
+      ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
+    }
+  
+    addHandlerUpdateServings(handler) {
+      this._parentElement.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn--update-servings');
+        if (!btn) return;
+        const { updateTo } = btn.dataset;
+        if (+updateTo > 0) handler(+updateTo);
+      });
+    }
+  
+    addHandlerAddBookmark(handler) {
+      this._parentElement.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn--bookmark');
+        if (!btn) return;
+        handler();
+      });
+    }
 
     _generateMarkup() {
       return `
